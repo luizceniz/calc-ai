@@ -338,14 +338,47 @@ The first experiment, with only 10,000 samples, already reached **92.6%** accura
 ---
 
 ## What I learned
-
+ 
 **The data defines what the model knows.** MNIST was collected in the United States, where a "1" is usually a straight stick. Drawn the Brazilian way, with a long diagonal flag, the network read it as a "3" with 80% confidence, while a straight "1" was recognized at 92%. Nothing was wrong with the code: the network simply never saw a "1" like that. A crossed "7" has the same problem.
-
+ 
 **Preprocessing is half the work.** The network scores above 90% on MNIST, but real drawings only work once they look like MNIST: proportional scaling, grayscale averaging, a thick enough stroke and center of mass alignment. Each of these fixed a specific failure.
-
+ 
 **Every neuron does the same small thing.** Multiply, add, squash. Recognizing handwriting comes from 50,000 of these small multiplications, tuned one nudge at a time.
-
+ 
 ---
+ 
+## The future: real estate
+ 
+This calculator is a learning project, but the method behind it is not limited to digits. I have worked in real estate technology for more than 15 years, building CRMs, property websites, listing importers and many other tools for the market. The next step is to apply what was built here to the problems I know best.
+ 
+The core idea transfers directly: **turn messy real-world input into a fixed, normalized format, then let a network trained on labeled examples recognize the pattern.** A drawing became 784 numbers; a listing photo, a description or a property record can become numbers too.
+ 
+### Where it fits
+ 
+**Listing photo recognition.** Classify each photo by what it shows (kitchen, bathroom, bedroom, living room, facade, floor plan) to sort galleries automatically, pick the best cover photo, and flag low-quality images such as blurry, dark or watermarked ones. It is the same pipeline as the calculator: resize to a fixed grid, normalize the pixels, and use a softmax output with one position per room type instead of one per digit.
+ 
+**Duplicate detection.** The same property often arrives several times, from different agencies or different import feeds, with slightly different prices, photos and descriptions. Each pair of listings can be described by a set of numbers (price and area differences, bedrooms, distance between locations, text and photo similarity), and a network with a single sigmoid output answers one question: *how likely is it that these two are the same property?*
+ 
+**Description patterns.** Read free-text descriptions to extract features that were never filled in as structured fields (pool, balcony, furnished, pet-friendly), classify the property type, and flag listings where the text contradicts the data, like a description mentioning three bedrooms on a listing registered with two.
+ 
+**Price estimation and anomalies.** Estimate a property's value from its characteristics, a regression problem with a linear output, like the very first experiment in this project, which learned to add two numbers. More useful than the estimate itself: spotting listings whose price is far from what similar properties ask, which often reveals a typo or a mispriced property.
+ 
+**Lead scoring in the CRM.** Estimate the chance that a lead becomes a visit or a deal, based on its behavior and the properties it viewed, so agents know where to spend their time first.
+ 
+### Why this can work
+ 
+The hardest part of machine learning is labeled data, and real estate systems produce it every day as a side effect of normal work. Photos that agents tag, duplicates that operators merge by hand and leads that turn into deals are all examples with the correct answer attached, exactly like the label in each line of MNIST.
+ 
+### Lessons that carry over
+ 
+- **The data defines what the model knows.** A network trained on American handwriting misread a Brazilian "1". A model trained on listings from one city or one property segment will carry the same kind of bias into another.
+- **Preprocessing is half the work.** Photos with different sizes and lighting, addresses written in different ways and descriptions in free text all need to be normalized before any model sees them.
+- **Measure honestly.** Always keep a test set the model never trained on.
+- **Not everything needs a network.** The calculator does the arithmetic with plain code. In real estate, many rules (required fields, valid price ranges) are better as plain code too. The network belongs where the input is messy and human.
+A note on scale: real listing photos are large and in color, so they will call for architectures built for images (convolutional networks) rather than the simple fully connected network used here. The principles are the same; this project is the foundation for understanding them.
+ 
+---
+
 
 ## Limitations and roadmap
 
@@ -356,8 +389,12 @@ The first experiment, with only 10,000 samples, already reached **92.6%** accura
 - The operator is picked with buttons, not drawn.
 - Training runs a single pass over the data.
 
+**Future in Real Estate**
+
+
 **Roadmap**
 
+- [ ] Some real estate application
 - [ ] Multiple epochs and a separate test set (`mnist_test.csv`) for an honest final accuracy
 - [ ] Round weights to 4 decimals to make `model.js` smaller
 - [ ] Data augmentation to teach the network Brazilian-style 1s and crossed 7s
