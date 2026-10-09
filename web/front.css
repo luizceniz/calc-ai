@@ -4,7 +4,7 @@ body{
 
 .row div{
     display:inline-block;
-    height:200px;
+    height:auto;
     margin-right:10px;
     vertical-align: top;
 }
@@ -17,14 +17,13 @@ body{
 }
 
 .digit canvas{
-    position:relative;
     width:280px;
     height:280px;
     border:1px solid #DDD;
     border-radius:5px;
 }
 
-.operation > button
+button
 {
     font-size:50px;
     text-align:center;
@@ -42,4 +41,18 @@ body{
 {
     background-color: #FF0;
 }
+.equal > button
+{
+    margin-top:150px;
+}
 
+.digit .res{
+    width:280px;
+    height:280px;
+    border:1px solid #DDD;
+    border-radius:5px;   
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+    font-size:170px;
+}
