@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Calc-AI Frontend</title>
+        <link rel="stylesheet" href="front.css">
+        <script src="https://code.jquery.com/jquery-4.0.0.slim.min.js" integrity="sha256-8DGpv13HIm+5iDNWw1XqxgFB4mj+yOKFNb+tHBZOowc=" crossorigin="anonymous"></script>
+        <script src="front.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="digit">
+                <p>First digit</p>  
+                <canvas id="digit1" width="280" height="280"></canvas>
+                <a href="javascript:clear(1)">clear</a>
+            </div>
+            <div class="operation">
+                <button class="sel">+</button>  
+                <button>-</button>  
+                <button>*</button>  
+                <button>/</button>  
+            </div>
+            <div class="digit">
+                <p>Second digit</p>  
+                <canvas id="digit2" width="280" height="280"></canvas>
+                <a href="javascript:clear(2)">clear</a>
+            </div>
+        </div>
+    </body>
+</html>
