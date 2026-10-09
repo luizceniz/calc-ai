@@ -19,6 +19,7 @@ There are no machine learning libraries here. Every weight, every forward pass a
 - [Part 4: from PHP to the browser](#part-4-from-php-to-the-browser)
 - [Results](#results)
 - [What I learned](#what-i-learned)
+- [The future: real estate](#the-future-real-estate)
 - [Limitations and roadmap](#limitations-and-roadmap)
 
 ---
