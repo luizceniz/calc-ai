@@ -8,24 +8,27 @@ $(document).ready(function(){
             $('.operation button').removeClass('sel');
             $(this).addClass('sel');
             operation = $(this).text();
+            tryAutoCalc();
         })
     });
 
     // drawings
     $('canvas').each(function(){
         const ctx = this.getContext("2d");
-        ctx.lineWidth = 15;
+        ctx.lineWidth = 30;
         ctx.strokeStyle = "black";
         ctx.lineCap = "round";
-        $(this).data("drawing", false);
+        $(this).attr("drawing", 0);
 
         // canvas events
         $(this).on('mousedown', function(e){
-            $(this).data("drawing", true);
+            $(this).attr("drawing", 1);
+            objCanvas.clear(this.id[5]);
             draw(this, e);
         });
         $(this).on('mouseup', function(){
             stopDraw(this);
+            tryAutoCalc();
         });
         $(this).on('mouseleave', function(){
             stopDraw(this);
@@ -39,14 +42,29 @@ $(document).ready(function(){
 
 function stopDraw(canvaObj)
 {
-    $(canvaObj).data("drawing", false);
+    $(canvaObj).attr("drawing", 0);
     const ctx = canvaObj.getContext("2d");    
     ctx.beginPath();
 }
 
+function tryAutoCalc()
+{
+    try{
+        const digit1 = objCanvas.getDigit(1);
+        const digit2 = objCanvas.getDigit(2);
+        calc(digit1, digit2);
+    } catch(e){
+        // ignore
+    }
+}
+
 function draw(canvaObj, e)
 {
-    if (!$(canvaObj).data("drawing")) return;
+    if ($(canvaObj).attr("drawing") != 1){
+        return;
+    }
+
+    $('.res').text(''); //  cleaning result
 
     // mouse position
     const rect = canvaObj.getBoundingClientRect();
@@ -66,13 +84,17 @@ function clear(canvaIdx)
     objCanvas.clear(canvaIdx);
 }
 
-function calc()
+function calc(d1, d2)
 {
     try{
-        const digit1 = objCanvas.getDigit(1);
-        const digit2 = objCanvas.getDigit(2);
+        const digit1 = d1 !== undefined ? d1 : objCanvas.getDigit(1);
+        const digit2 = d2 !== undefined ? d2 : objCanvas.getDigit(2);       
         
-        const res = eval(digit1+operation+digit2);
+        const calc = digit1+operation+digit2;
+
+        console.log(calc);
+
+        const res = eval(calc);
 
         $('.res').text(res);
     } catch(e){
@@ -121,10 +143,12 @@ const objCanvas = {
         const canvas = document.getElementById('digit'+idx);
         const rect = this.fitRect(canvas);
         if (!rect){
-            throw new Error(`The canva number ${idx} is empty`);
+            throw new Error(`The digit ${idx} is empty`);
         }   
         const drawData = this.getDrawData(idx, rect);
         const chances = objBrain.predict(drawData);
+
+        console.log(idx, chances);
 
         // finding the bigger chance
         return chances.indexOf(Math.max(...chances));   
@@ -144,8 +168,40 @@ const objCanvas = {
             }
         }
 
-        return data;
+        return this.centerByMass(data);
     },
+
+    centerByMass(data) {
+        // mass center, average by paint
+        let total = 0, sumX = 0, sumY = 0;
+        for (let y = 0; y < 28; y++) {
+            for (let x = 0; x < 28; x++) {
+                const p = data[y * 28 + x];
+                total += p;
+                sumX  += x * p;
+                sumY  += y * p;
+            }
+        }
+        const cx = sumX / total;
+        const cy = sumY / total;
+
+        // shift the mass center
+        const shiftX = Math.round(13.5 - cx);
+        const shiftY = Math.round(13.5 - cy);
+
+        // copying each pixel
+        const moved = new Array(784).fill(0);
+        for (let y = 0; y < 28; y++) {
+            for (let x = 0; x < 28; x++) {
+                const nx = x + shiftX, ny = y + shiftY;
+                if (nx >= 0 && nx < 28 && ny >= 0 && ny < 28) {   
+                    moved[ny * 28 + nx] = data[y * 28 + x];
+                }
+            }
+        }
+
+        return moved;
+    },    
 
     buildSmallCanva(idx, rect){
         // detect bigger measure
@@ -167,7 +223,7 @@ const objCanvas = {
         ctx.imageSmoothingEnabled  = true;
         ctx.imageSmoothingQuality = 'high';
 
-        // coping, resampling and centering at the same time
+        // copying, resampling and centering at the same time
         ctx.drawImage(canvas, rect.x, rect.y, rect.width, rect.height, 
                     Math.round((28 - newW) / 2), Math.round((28 - newH) / 2), newW, newH);
 
