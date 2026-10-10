@@ -9,6 +9,10 @@ body{
     vertical-align: top;
 }
 
+.row.ranking div {
+    width:282px;
+}
+
 .digit a{
     display:block;
     margin-top:5px;
@@ -55,4 +59,25 @@ button
     vertical-align:middle;
     text-align:center;
     font-size:170px;
+}
+
+
+.rank div{
+    display:inline-block;;
+}
+
+.rank .rankrow{
+    width:100px;
+    margin-bottom:2px
+}
+
+.rank .rankrow div{
+    width:auto; 
+}
+
+.rank .bar{
+    height:20px;
+    background-color:black;
+    border-top-right-radius :10px;
+    border-bottom-right-radius :10px;   
 }

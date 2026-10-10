@@ -49,12 +49,21 @@ function stopDraw(canvaObj)
 
 function tryAutoCalc()
 {
+    var bCalc = true;
     try{
-        const digit1 = objCanvas.getDigit(1);
-        const digit2 = objCanvas.getDigit(2);
-        calc(digit1, digit2);
+        var digit1 = objCanvas.getDigit(1);
     } catch(e){
-        // ignore
+        bCalc = false;
+    }
+
+    try{
+        var digit2 = objCanvas.getDigit(2);
+    } catch(e){
+        bCalc = false;
+    }
+
+    if (bCalc){
+        calc(digit1, digit2);
     }
 }
 
@@ -140,6 +149,8 @@ const objCanvas = {
     },
 
     getDigit(idx){
+        $('#rank'+idx).text('');
+
         const canvas = document.getElementById('digit'+idx);
         const rect = this.fitRect(canvas);
         if (!rect){
@@ -148,10 +159,20 @@ const objCanvas = {
         const drawData = this.getDrawData(idx, rect);
         const chances = objBrain.predict(drawData);
 
-        console.log(idx, chances);
+        this.renderRank(idx, chances);
 
         // finding the bigger chance
         return chances.indexOf(Math.max(...chances));   
+    },
+
+    renderRank(idx, chances){
+        chances.forEach( function(chance, i){
+            const w = Math.round(chance*200);
+            $('#rank'+idx).append(`<div class="rankrow"><div>${i}</div>
+                <div class="bar" style="width:200px;background-color:#ddd">
+                    <div class="bar" style="width:${w}px"></div></div></div>`);
+        });
+            
     },
 
     getDrawData(idx, rect){
