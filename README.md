@@ -2,6 +2,8 @@
 
 A calculator where you **draw the numbers by hand**. A neural network written from scratch reads each handwritten digit, and the app runs the operation you pick: `+`, `−`, `×` or `÷`.
 
+The live demo is available in https://luizceniz.lccsistemas.com.br/calc-ia.
+
 There are no machine learning libraries here. Every weight, every forward pass and every backpropagation step is plain PHP and JavaScript, written by hand, so you can follow exactly what the network is doing and why.
 
 ![The calculator recognizing two handwritten digits](docs/front1.png)
